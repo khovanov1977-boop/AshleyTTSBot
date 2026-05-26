@@ -19,18 +19,19 @@ dp = Dispatcher()
 
 logging.basicConfig(level=logging.INFO)
 
-# --- DEFAULTS ---
 DEFAULT_VOICE = "ru-RU-SvetlanaNeural"
 
-# --- STORAGE ---
 user_settings = {}
 
-# --- VOICES ---
+# --- RU VOICES ONLY (3F + 3M) ---
 VOICE_PRESETS = {
-    "ru_female": "ru-RU-SvetlanaNeural",
-    "ru_male": "ru-RU-DmitryNeural",
-    "en_female": "en-US-AriaNeural",
-    "en_male": "en-US-GuyNeural",
+    "ru_female_1": "ru-RU-SvetlanaNeural",
+    "ru_female_2": "ru-RU-DariyaNeural",
+    "ru_female_3": "ru-RU-SvetlanaNeural",
+
+    "ru_male_1": "ru-RU-DmitryNeural",
+    "ru_male_2": "ru-RU-PavelNeural",
+    "ru_male_3": "ru-RU-DmitryNeural",
 }
 
 
@@ -38,8 +39,7 @@ VOICE_PRESETS = {
 @dp.message(CommandStart())
 async def start_handler(message: Message):
     await message.answer(
-        "Бот озвучивает текст.\n\n"
-        "Команды:\n"
+        "Озвучка текста.\n\n"
         "/voice — выбрать голос\n"
         "/speed +20% / -20%\n"
         "/pitch +10Hz / -10Hz"
@@ -51,10 +51,13 @@ async def start_handler(message: Message):
 async def voice_menu(message: Message):
     keyboard = InlineKeyboardMarkup(
         inline_keyboard=[
-            [InlineKeyboardButton(text="🇷🇺 Female", callback_data="v_ru_female")],
-            [InlineKeyboardButton(text="🇷🇺 Male", callback_data="v_ru_male")],
-            [InlineKeyboardButton(text="🇺🇸 Female", callback_data="v_en_female")],
-            [InlineKeyboardButton(text="🇺🇸 Male", callback_data="v_en_male")],
+            [InlineKeyboardButton(text="👩 Female 1", callback_data="v_ru_female_1")],
+            [InlineKeyboardButton(text="👩 Female 2", callback_data="v_ru_female_2")],
+            [InlineKeyboardButton(text="👩 Female 3", callback_data="v_ru_female_3")],
+
+            [InlineKeyboardButton(text="👨 Male 1", callback_data="v_ru_male_1")],
+            [InlineKeyboardButton(text="👨 Male 2", callback_data="v_ru_male_2")],
+            [InlineKeyboardButton(text="👨 Male 3", callback_data="v_ru_male_3")],
         ]
     )
 
@@ -66,7 +69,8 @@ async def voice_menu(message: Message):
 async def voice_callback(callback: CallbackQuery):
     user_id = callback.from_user.id
 
-    voice = VOICE_PRESETS.get(callback.data.replace("v_", ""))
+    voice_key = callback.data.replace("v_", "")
+    voice = VOICE_PRESETS.get(voice_key)
 
     if voice:
         settings = user_settings.get(user_id, {})
@@ -83,37 +87,41 @@ async def voice_callback(callback: CallbackQuery):
 # --- SPEED ---
 @dp.message(Command("speed"))
 async def set_speed(message: Message):
-    args = message.text.split()
+    parts = message.text.split(maxsplit=1)
 
-    if len(args) < 2:
+    if len(parts) < 2:
         await message.answer("Использование: /speed +20% или -20%")
         return
+
+    value = parts[1].strip()
 
     user_id = message.from_user.id
     settings = user_settings.get(user_id, {})
 
-    settings["rate"] = args[1]
+    settings["rate"] = value
     user_settings[user_id] = settings
 
-    await message.answer(f"Скорость: {args[1]}")
+    await message.answer(f"Скорость установлена: {value}")
 
 
 # --- PITCH ---
 @dp.message(Command("pitch"))
 async def set_pitch(message: Message):
-    args = message.text.split()
+    parts = message.text.split(maxsplit=1)
 
-    if len(args) < 2:
+    if len(parts) < 2:
         await message.answer("Использование: /pitch +10Hz или -10Hz")
         return
+
+    value = parts[1].strip()
 
     user_id = message.from_user.id
     settings = user_settings.get(user_id, {})
 
-    settings["pitch"] = args[1]
+    settings["pitch"] = value
     user_settings[user_id] = settings
 
-    await message.answer(f"Pitch: {args[1]}")
+    await message.answer(f"Pitch установлен: {value}")
 
 
 # --- TTS ---
@@ -146,7 +154,6 @@ async def tts_handler(message: Message):
     await message.answer_voice(audio)
 
 
-# --- RUN ---
 async def main():
     await dp.start_polling(bot)
 

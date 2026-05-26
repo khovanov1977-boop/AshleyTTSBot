@@ -4,9 +4,10 @@ import os
 
 import edge_tts
 
-from aiogram import Bot, Dispatcher
+from aiogram import Bot, Dispatcher, F
 from aiogram.filters import CommandStart, Command
-from aiogram.types import Message, FSInputFile
+from aiogram.types import Message, FSInputFile, CallbackQuery
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -18,49 +19,61 @@ dp = Dispatcher()
 
 logging.basicConfig(level=logging.INFO)
 
-# Голоса по умолчанию
 DEFAULT_VOICE = "ru-RU-SvetlanaNeural"
 
-# Хранилище выбора пользователя (в памяти)
 user_voices = {}
 
 
+# --- START ---
 @dp.message(CommandStart())
 async def start_handler(message: Message):
     await message.answer(
         "Отправь текст — я озвучу его.\n\n"
-        "Команды:\n"
-        "/voice female — женский голос\n"
-        "/voice male — мужской голос"
+        "Команда:\n"
+        "/voice — выбрать голос"
     )
 
 
+# --- VOICE MENU ---
 @dp.message(Command("voice"))
-async def voice_handler(message: Message):
-    global user_voices
+async def voice_menu(message: Message):
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text="👩 Female (Svetlana)",
+                    callback_data="voice_female"
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    text="👨 Male (Dmitry)",
+                    callback_data="voice_male"
+                )
+            ]
+        ]
+    )
 
-    args = message.text.split()
-
-    if len(args) < 2:
-        await message.answer(
-            "Использование:\n"
-            "/voice female\n"
-            "/voice male"
-        )
-        return
-
-    choice = args[1].lower()
-
-    if choice == "female":
-        user_voices[message.from_user.id] = "ru-RU-SvetlanaNeural"
-        await message.answer("Выбран женский голос")
-    elif choice == "male":
-        user_voices[message.from_user.id] = "ru-RU-DmitryNeural"
-        await message.answer("Выбран мужской голос")
-    else:
-        await message.answer("Используй: female или male")
+    await message.answer("Выбери голос:", reply_markup=keyboard)
 
 
+# --- CALLBACK HANDLER ---
+@dp.callback_query(F.data.startswith("voice_"))
+async def voice_callback(callback: CallbackQuery):
+    user_id = callback.from_user.id
+
+    if callback.data == "voice_female":
+        user_voices[user_id] = "ru-RU-SvetlanaNeural"
+        await callback.message.answer("Выбран женский голос")
+
+    elif callback.data == "voice_male":
+        user_voices[user_id] = "ru-RU-DmitryNeural"
+        await callback.message.answer("Выбран мужской голос")
+
+    await callback.answer()
+
+
+# --- TTS ---
 @dp.message()
 async def tts_handler(message: Message):
 

@@ -39,7 +39,7 @@ VOICE_PRESETS = {
 @dp.message(CommandStart())
 async def start_handler(message: Message):
     await message.answer(
-        "Озвучка текста.\n\n"
+        "Озвучка текста v2.\n\n"
         "/voice — выбрать голос\n"
         "/speed +20% / -20%\n"
         "/pitch +10Hz / -10Hz"

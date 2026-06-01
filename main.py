@@ -36,7 +36,7 @@ VOICE_PRESETS = {
 STYLE_PRESETS = {
     "calm": {
         "name": "😌 Спокойный",
-        "rate": "-20%",
+        "rate": "-15%",
         "pitch": "-10Hz",
         "volume": "-10%",
     },
@@ -48,14 +48,14 @@ STYLE_PRESETS = {
     },
     "energetic": {
         "name": "⚡ Энергичный",
-        "rate": "+25%",
+        "rate": "+20%",
         "pitch": "+10Hz",
-        "volume": "+10%",
+        "volume": "+15%",
     },
     "announcer": {
         "name": "📺 Диктор",
-        "rate": "-10%",
-        "pitch": "+0Hz",
+        "rate": "-5%",
+        "pitch": "-5Hz",
         "volume": "+15%",
     },
     "tender": {
@@ -72,33 +72,33 @@ STYLE_PRESETS = {
     },
     "worried": {
         "name": "😟 Взволнованный",
-        "rate": "+30%",
+        "rate": "+25%",
         "pitch": "+20Hz",
         "volume": "+10%",
     },
     "scared": {
         "name": "😨 Испуганный",
-        "rate": "+40%",
+        "rate": "+30%",
         "pitch": "+30Hz",
         "volume": "+5%",
     },
     "passionate": {
         "name": "🔥 Страстный",
-        "rate": "+10%",
-        "pitch": "-5Hz",
-        "volume": "+25%",
+        "rate": "-5%",
+        "pitch": "-15Hz",
+        "volume": "-10%",
     },
     "playful": {
         "name": "😉 Игривый",
         "rate": "+20%",
-        "pitch": "+25Hz",
+        "pitch": "+20Hz",
         "volume": "+5%",
     },
     "serious": {
         "name": "🎓 Серьёзный",
-        "rate": "-15%",
-        "pitch": "-15Hz",
-        "volume": "+0%",
+        "rate": "-5%",
+        "pitch": "-5Hz",
+        "volume": "+10%",
     },
     "sad": {
         "name": "😔 Грустный",

@@ -192,6 +192,7 @@ async def tts_handler(message: Message):
     voice = settings.get("voice", DEFAULT_VOICE)
     rate = settings.get("rate", "+0%")
     pitch = settings.get("pitch", "+0Hz")
+    volume = settings.get("volume", "+0%")
 
     file_name = f"voice_{user_id}.mp3"
 
@@ -201,6 +202,7 @@ async def tts_handler(message: Message):
             voice=voice,
             rate=rate,
             pitch=pitch,
+            volume=volume,
         )
 
         await communicate.save(file_name)
